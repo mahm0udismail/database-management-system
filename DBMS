@@ -1,56 +1,56 @@
 #! /user/bin/bash
 function createDb {
-read -p "Enter your Name: " dbname
-if [[ $dbname = "" ]] ;then 
-    echo "please enter name to DBMS"
-elif [[ $dbname =~ [/.:~#*\|\-] ]];then
-    echo "plese donot enter spcial charter"
-elif [[ $dbname =~ ^[+(0-9)] ]];then
-    echo "please enter name not star with number"
-elif [[ -e $dbname ]];then
-    echo "this data base all already exists"
-elif [[ $dbname =~ ^[a-zA-Z] ]];then 
-    mkdir $dbname
-fi
+    read -p "Enter your Name: " dbname
+    if [[ $dbname = "" ]] ;then 
+        echo "please enter name to DBMS"
+    elif [[ $dbname =~ [/.:~#*\|\-] ]];then
+        echo "plese donot enter spcial charter"
+    elif [[ $dbname =~ ^[+(0-9)] ]];then
+        echo "please enter name not star with number"
+    elif [[ -e $dbname ]];then
+        echo "this data base all already exists"
+    elif [[ $dbname =~ ^[a-zA-Z] ]];then 
+        mkdir $dbname
+    fi
 }
 
 function listDb {
-read -p "Enter your Name: " ls
-if [[ $ls = "" ]]
-then
-ls -l
-elif [[ $ls = -l ]]
-then
-ls -l
-elif [[ $ls = -a ]]
-then
-ls -a
-elif [[ $ls = -t ]]
-then
-ls -t
-elif [[ $ls = -r ]]
-then
-ls -r
-elif [[ $ls = -S ]]
-then
-ls -S
-elif [[ $ls = -R ]]
-then
-ls -R
-elif [[ $ls = -i ]]
-then
-ls -i
-elif [[ $ls = -g ]]
-then
-ls -g
-elif [[ $ls = -h ]]
-then
-ls -h
-elif [[ $ls = -d ]]
-then
-ls -d
-else 
-echo "enter thing relateve ls"
-fi
+    read -p "Enter your Name: " ls
+    if [[ $ls = "" ]]
+    then
+    ls -l
+    elif [[ $ls = -l ]]
+    then
+    ls -l
+    elif [[ $ls = -a ]]
+    then
+    ls -a
+    elif [[ $ls = -t ]]
+    then
+    ls -t
+    elif [[ $ls = -r ]]
+    then
+    ls -r
+    elif [[ $ls = -S ]]
+    then
+    ls -S
+    elif [[ $ls = -R ]]
+    then
+    ls -R
+    elif [[ $ls = -i ]]
+    then
+    ls -i
+    elif [[ $ls = -g ]]
+    then
+    ls -g
+    elif [[ $ls = -h ]]
+    then
+    ls -h
+    elif [[ $ls = -d ]]
+    then
+    ls -d
+    else 
+    echo "enter thing relateve ls"
+    fi
 }
 listDb
