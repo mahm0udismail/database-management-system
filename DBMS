@@ -53,4 +53,17 @@ function listDb {
     echo "enter thing relateve ls"
     fi
 }
-listDb
+function createtable {
+    read -p "Enter your Name: " table
+    if [[ $table = "" ]] ;then 
+        echo "please enter name to table"
+    elif [[ $table =~ [/.:~#*\|\-] ]];then
+        echo "plese donot enter spcial charter"
+    elif [[ $table =~ ^[+(0-9)] ]];then
+        echo "please enter name not star with number"
+    elif [[ -e $table ]];then
+        echo "this table all already exists"
+    elif [[ $table =~ ^[a-zA-Z] ]];then 
+        touch $table
+    fi
+}
