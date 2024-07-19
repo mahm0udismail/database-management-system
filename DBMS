@@ -1,1 +1,16 @@
 #! /user/bin/bash
+function createDb {
+read -p "Enter your Name: " dbname
+if [[ $dbname = "" ]] ;then 
+    echo "please enter name to DBMS"
+elif [[ $dbname =~ [/.:~#*\|\-] ]];then
+    echo "plese donot enter spcial charter"
+elif [[ $dbname =~ ^[+(0-9)] ]];then
+    echo "please enter name not star with number"
+elif [[ -e $dbname ]];then
+    echo "this data base all already exists"
+elif [[ $dbname =~ ^[a-zA-Z] ]];then 
+    mkdir $dbname
+fi
+}
+createDb
