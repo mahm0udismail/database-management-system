@@ -13,4 +13,44 @@ elif [[ $dbname =~ ^[a-zA-Z] ]];then
     mkdir $dbname
 fi
 }
-createDb
+
+function listDb {
+read -p "Enter your Name: " ls
+if [[ $ls = "" ]]
+then
+ls -l
+elif [[ $ls = -l ]]
+then
+ls -l
+elif [[ $ls = -a ]]
+then
+ls -a
+elif [[ $ls = -t ]]
+then
+ls -t
+elif [[ $ls = -r ]]
+then
+ls -r
+elif [[ $ls = -S ]]
+then
+ls -S
+elif [[ $ls = -R ]]
+then
+ls -R
+elif [[ $ls = -i ]]
+then
+ls -i
+elif [[ $ls = -g ]]
+then
+ls -g
+elif [[ $ls = -h ]]
+then
+ls -h
+elif [[ $ls = -d ]]
+then
+ls -d
+else 
+echo "enter thing relateve ls"
+fi
+}
+listDb
