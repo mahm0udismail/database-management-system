@@ -66,4 +66,67 @@ function createtable {
     elif [[ $table =~ ^[a-zA-Z] ]];then 
         touch $table
     fi
+
+    if [[ -f $table ]]; then
+        valid=true
+        while $valid ;do
+            read -p  "enter number of colums: " numcol
+            if [[ $numcol = +([1-9])*([0-9]) ]];then
+                valid=false
+            fi
+        done
+        valid=true
+        while $valid;do
+            read -p "enter name of pk"
+            if [[ $pk = "" ]] ;then 
+                echo "please enter name to pk"
+            elif [[ $pk =~ [/.:~#*\|\-] ]];then
+                echo "plese donot enter spcial charter"
+            elif [[ $pk =~ ^[+(0-9)] ]];then
+                echo "please enter name not star with number"
+            elif [[ -e $pk ]];then
+                echo "this data base all already exists"
+            elif [[ $pk =~ ^[a-zA-Z] ]];then 
+                echo -n "$pk" >> "$table"
+                echo -n "-" >> "$table"
+                valid=false
+
+            fi
+        done
+
+        valid=true
+        while $valid; do
+            read -p "enter int or str: " option
+                if [[ "$option" = "int" || "$option" = "str" ]]; then
+                    echo -n "$option" >> "$table"
+                    echo -n "-" >> "$table"
+                    valid=false
+                else
+                    echo  "please enter in int or str"
+                fi
+
+        done
+
+        valid=true
+        while $valid; do
+            read -p "enter size pk: "size
+            if [[ $size = +([1-9])*([0-9]) ]]; then
+                echo -n "$size" >> "$dbtable"
+                echo -n ":" >> "$dbtable"
+                valid=false
+            else
+                echo  "please enter number"
+            fi
+        done
+
+
+
+
+
+
+    fi
+        
+
+
+
 }
