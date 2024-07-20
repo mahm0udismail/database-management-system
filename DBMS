@@ -77,7 +77,7 @@ function createtable {
         done
         valid=true
         while $valid;do
-            read -p "enter name of pk"
+            read -p "enter name of pk: " pk
             if [[ $pk = "" ]] ;then 
                 echo "please enter name to pk"
             elif [[ $pk =~ [/.:~#*\|\-] ]];then
@@ -109,17 +109,68 @@ function createtable {
 
         valid=true
         while $valid; do
-            read -p "enter size pk: "size
-            if [[ $size = +([1-9])*([0-9]) ]]; then
-                echo -n "$size" >> "$dbtable"
-                echo -n ":" >> "$dbtable"
+            read -p "enter size of file: " sizefiled
+            if [[ $sizefiled = +([1-9])*([0-9]) ]]; then
+                echo -n "$sizefiled" >> "$table"
+                echo -n ":" >> "$table"
                 valid=false
             else
                 echo  "please enter number"
             fi
         done
 
+        for(( i = 1; i < $numcol; i++ ));do
+        valid=true
+            while $valid;
+            do
+            read -p "enter name field: " namefield
+                if [[ $namefield = "" ]];then
+                echo "please enter name to field"
+                elif [[ $namefield  =~ [/.:~#*\|\-] ]];then
+                echo "plese donot enter spcial charte"
+                elif [[ $namefield  =~ ^[a-zA-Z] ]];then
+                echo -n "$namefield" >> "$table"
+                echo -n "-" >> "$table"
+                else
+                echo "something is wrong in name field"
+                fi
+                valid=false
+            done
 
+
+
+            valid=true
+            while $valid; do
+                read -p "enter int or str: " option
+                    if [[ "$option" = "int" || "$option" = "str" ]]; then
+                        echo -n "$option" >> "$table"
+                        echo -n "-" >> "$table"
+                        valid=false
+                    else
+                        echo  "please enter in int or str"
+                    fi
+
+            done
+
+            valid=true
+            while $valid; do
+                read -p "enter size: " fieldsize
+                if [[ $fieldsize = +([1-9])*([0-9]) ]]; then
+                    echo -n "$fieldsize" >> "$table"
+                    echo -n ":" >> "$table"
+                    if [[ i -eq $numcol-1 ]]; then
+                    echo 'finsh' >> "$table"
+                    echo "ever thing is save"
+                    fi
+                    valid=false
+                else
+                    echo  "please enter number"
+                fi
+            done
+
+    done
+    else
+    echo "wrong input"
 
 
 
@@ -130,3 +181,4 @@ function createtable {
 
 
 }
+createtable
