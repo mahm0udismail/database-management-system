@@ -313,4 +313,23 @@ function insertIntoTable {
         done
     fi
 }
-insertIntoTable
+function deleteRecord {
+    read -p "enter name table : " table
+    if ! [[ -f $table ]]; then
+        echo "this table donot exist"
+    else
+		echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
+        read
+        recordNum=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -n -e "$REPLY" | cut -d':' -f1)
+        if [[ $REPLY == '' ]];then
+            echo "please enter number"
+        elif [[ $recordNum = '' ]];then
+            echo "this number not exit"
+        else
+            recordNum=$(($recordNum + 1))
+            sed -i "${recordNum}d" "$table"
+            echo "successfully"
+            
+        fi
+    fi 
+}
