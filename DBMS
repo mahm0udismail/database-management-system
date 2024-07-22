@@ -254,7 +254,7 @@ function insertIntoTable {
 
                         # check_type start
                         # check_type=$(check_dataType "$REPLY" "$table" 1)
-                        datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
+                        datatype=$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" '{print $2}')
                             if [[ "$REPLY" = '' ]]; then
                                 dt=1
                             elif [[ "$REPLY" = -?(0) ]]; then
@@ -265,7 +265,7 @@ function insertIntoTable {
                                     dt=1
                                 else
                                     # datatype string and input is integer
-                                    dt=1
+                                    dt=0
                                 fi
                             else
                                 if [[ $datatype == int ]]; then
@@ -280,7 +280,7 @@ function insertIntoTable {
 
                         # check_size=$(check_size "$REPLY" "$table" 1)
                         # check_size start
-                            datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
+                            datasize=$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
                             if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
                                 ds=1
                             else
