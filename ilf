@@ -1,1 +1,4 @@
-pk-int-3:name-int-3:named-int-3:
+pk-int-3:name-str-3:address-str-3
+1:2:3
+2:3:23
+23:3:3

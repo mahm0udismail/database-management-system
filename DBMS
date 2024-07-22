@@ -186,41 +186,42 @@ function insertIntoTable {
             read
             pk_used=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -e "$REPLY") 
             
-            # check_type start
-            # check_type=$(check_dataType "$REPLY" "$table" 1)
-            datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
-                if [[ "$REPLY" = '' ]]; then
-                    echo "emtey"
-                elif [[ "$REPLY" = -?(0) ]]; then
-                    echo "zero" # error!
-                elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
-                    if [[ $datatype == int ]]; then
-                        # datatype integer and the input is integer
-                        echo "int"
-                    else
-                        # datatype string and input is integer
-                        echo "not string 1"
-                    fi
-                else
-                    if [[ $datatype == int ]]; then
-                        # datatype integer and input is string
-                        echo "not int 2" # error!
-                    else
-                        # datatype string and input is string
-                        echo "string 2"
-                    fi
-                fi
-            # check_type end
+# check_type start
+                        # check_type=$(check_dataType "$REPLY" "$table" 1)
+                        datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
+                            if [[ "$REPLY" = '' ]]; then
+                                dt=1
+                            elif [[ "$REPLY" = -?(0) ]]; then
+                                dt=0 # error!
+                            elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
+                                if [[ $datatype == int ]]; then
+                                    # datatype integer and the input is integer
+                                    dt=1
+                                else
+                                    # datatype string and input is integer
+                                    dt=1
+                                fi
+                            else
+                                if [[ $datatype == int ]]; then
+                                    # datatype integer and input is string
+                                    dt=0 # error!
+                                else
+                                    # datatype string and input is string
+                                    dt=1
+                                fi
+                            fi
+                        # check_type end
 
-			# check_size=$(check_size "$REPLY" "$table" 1)
-            # check_size start
-                datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
-                if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
-                    echo "le"
-                else
-                    echo "er" # error
-                fi
-            # check_size end
+                        # check_size=$(check_size "$REPLY" "$table" 1)
+                        # check_size start
+                            datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
+                            if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
+                                ds=1
+                            else
+                                ds=0 # error
+                            fi
+                        # check_size end
+
             
 
 
@@ -233,51 +234,83 @@ function insertIntoTable {
                 echo "please enter name to DBMS"
             elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
                 echo "plese donot enter spcial charter"
-            elif [[ $check_type == 0 ]];then
+            elif [[ $dt == 0 ]];then
                 echo "error in type"
-            elif [[ $check_size == 0 ]];then
+            elif [[ $ds == 0 ]];then
                 echo "error in size"
             elif ! [[ "$pk_used" == '' ]]; then
 				echo "pk is already exit"
             else
                 echo -n "$REPLY" >> "$table"
 				echo -n ':' >> "$table"
-            Insert=falses
+                num_col=$(head -1 "$table" | awk -F: '{print NF}')
+
+                for (( i=2 ; i <= num_col; i++ ));do
+                    insertdata=true
+                    while $insertdata ; do
+                        echo "enter "$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')" of type $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')"
+                        read
+
+
+                        # check_type start
+                        # check_type=$(check_dataType "$REPLY" "$table" 1)
+                        datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
+                            if [[ "$REPLY" = '' ]]; then
+                                dt=1
+                            elif [[ "$REPLY" = -?(0) ]]; then
+                                dt=0 # error!
+                            elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
+                                if [[ $datatype == int ]]; then
+                                    # datatype integer and the input is integer
+                                    dt=1
+                                else
+                                    # datatype string and input is integer
+                                    dt=1
+                                fi
+                            else
+                                if [[ $datatype == int ]]; then
+                                    # datatype integer and input is string
+                                    dt=0 # error!
+                                else
+                                    # datatype string and input is string
+                                    dt=1
+                                fi
+                            fi
+                        # check_type end
+
+                        # check_size=$(check_size "$REPLY" "$table" 1)
+                        # check_size start
+                            datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
+                            if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
+                                ds=1
+                            else
+                                ds=0 # error
+                            fi
+                        # check_size end
+
+
+                        if [[ $dt == 0 ]];then
+                            echo "error type"
+                        elif [[ $ds == 0 ]];then
+                            echo "error in size"
+                        elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
+                            echo "plese donot enter spcial charter"
+                        else
+                            if [[ i -eq $num_col ]];then
+                                echo "$REPLY" >> "$table"
+								insertdata=false
+								Insert=false
+                            else
+                                echo -n "$REPLY": >> "$table"
+								insertdata=false
+                            fi
+                        fi
+
+
+                    done
+                done
             fi
         done
     fi
 }
-
-read -p "enter name table: " table
-			echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
-            read
-echo $REPLY
-	# datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
-    #             echo $datatype
-    #             if [[ "$REPLY" = '' ]]; then
-    #                 echo "emtey"
-    #             elif [[ "$REPLY" = -?(0) ]]; then
-    #                 echo "zero" # error!
-    #             elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
-    #                 if [[ $datatype == int ]]; then
-    #                     # datatype integer and the input is integer
-    #                     echo "int"
-    #                 else
-    #                     # datatype string and input is integer
-    #                     echo "not string 1"
-    #                 fi
-    #             else
-    #                 if [[ $datatype == int ]]; then
-    #                     # datatype integer and input is string
-    #                     echo "not int 2" # error!
-    #                 else
-    #                     # datatype string and input is string
-    #                     echo "string 2"
-    #                 fi
-    #             fi
-
-
-
-
-
-                
+insertIntoTable
