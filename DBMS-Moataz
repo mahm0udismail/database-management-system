@@ -1,0 +1,335 @@
+#! /usr/bin/bash
+
+function secondMenu()
+{   
+    # Create Table function
+    function createTable()
+    {
+        echo "=========== Important Notes ==========="
+        echo "- Do not use special characters"
+        echo "- Do not use numbers at the first"
+        echo "======================================="
+        read -p "Enter table name: " tableName1
+        temp=""
+        if [[ "$tableName1" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+        then if [[ -f "$tableName1" ]]
+            then echo "It's already exist, please user another name."; secondMenu
+            # else touch "$tableName1.sh"; touch ".$tableName1.meta"; echo "$tableName1" table created sucessfully.
+            fi
+            read -p "Enter number of columns: " columnNumber
+            counter=1
+            sep=":"
+            rSep="\n"
+            pKey=""
+            metaData="Field"$sep"Type"$sep"Key"
+            while [[ $counter -le $columnNumber ]]; do
+                read -p "Enter column $counter name: " columnName
+
+                echo -e "Enter column $counter type: "
+                select var in "int" "str"
+                do
+                    case $var in
+                        int ) columnType="int"; break;;
+                        str ) columnType="str"; break;; 
+                        * ) echo "Wrong choice" ;; 
+                    esac
+                done
+
+                if [[ $pKey == "" ]]
+                then echo -e "Make it primary key? "
+                    select var in "yes" "no"
+                    do
+                        case $var in
+                        yes) pKey="PK";
+                        metaData+=$rSep$columnName$sep$columnType$sep$pKey;
+                        break;;
+                        no) metaData+=$rSep$columnName$sep$columnType$sep"";
+                        break;;
+                        * ) echo "Wrong choice" ;;
+                        esac
+                    done
+                else metaData+=$rSep$columnName$sep$columnType$sep""
+                fi
+
+                # handling seperator at the end
+                if [[ $counter == $columnNumber ]]
+                then temp=$temp$columnName
+                else temp=$temp$columnName$sep
+                fi
+                ((counter++))
+            done
+            touch .$tableName1
+            echo -e $metaData >> .$tableName1
+            touch $tableName1
+            echo -e $temp >> $tableName1
+
+            if [[ $? == 0 ]]
+            then echo "Table created sucessfuly"
+            else echo "Error creating table $tableName1"
+            fi
+        else echo "Invaild name."
+        fi   
+    }
+    
+    # List Table function
+    function listTable()
+    {
+        ls -l;
+        echo "Listed successfully"
+    }
+
+    # Drop Table function
+    function dropTable()
+    {
+        read -p "Enter table name: " tableName3
+        if [[ "$tableName3" = "" ]]
+        then echo "Empty input, please enter table name."
+        elif [[ -f "$tableName3" ]]
+        then rm -rf "$tableName3"; rm -rf ".$tableName3"; echo "$tableName3" table removed sucessfully 
+        else echo "It is not exist."
+        fi   
+    }
+
+    # Insert into Table function
+    # function createTable()
+    # {   
+    #     echo -e "Table Name: \c"
+    #     read tableName
+    #     if ! [[ -f $tableName ]]; then
+    #         echo "Table $tableName isn't existed ,choose another Table"
+    #         tablesMenu
+    #     fi
+    #     colsNum=`awk 'END{print NR}' .$tableName`
+    #     sep="|"
+    #     rSep="\n"
+    #     for (( i = 2; i <= $colsNum; i++ )); do
+    #         colName=$(awk 'BEGIN{FS="|"}{ if(NR=='$i') print $1}' .$tableName)
+    #         colType=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $2}' .$tableName)
+    #         colKey=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $3}' .$tableName)
+    #         echo -e "$colName ($colType) = \c"
+    #         read data
+
+    #         # Validate Input
+    #         if [[ $colType == "int" ]]; then
+    #         while ! [[ $data =~ ^[0-9]*$ ]]; do
+    #             echo -e "invalid DataType !!"
+    #             echo -e "$colName ($colType) = \c"
+    #             read data
+    #         done
+    #         fi
+
+    #         if [[ $colKey == "PK" ]]; then
+    #         while [[ true ]]; do
+    #             if [[ $data =~ ^[`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $(('$i'-1))}' $tableName`]$ ]]; then
+    #             echo -e "invalid input for Primary Key !!"
+    #             else
+    #             break;
+    #             fi
+    #             echo -e "$colName ($colType) = \c"
+    #             read data
+    #         done
+    #         fi
+
+    #         #Set row
+    #         if [[ $i == $colsNum ]]; then
+    #         row=$row$data$rSep
+    #         else
+    #         row=$row$data$sep
+    #         fi
+    #     done
+    #     echo -e $row"\c" >> $tableName
+    #     if [[ $? == 0 ]]
+    #     then
+    #         echo "Data Inserted Successfully"
+    #     else
+    #         echo "Error Inserting Data into Table $tableName"
+    #     fi
+    #     row=""
+    #     tablesMenu
+    # }
+
+    # # Select from Table function
+    # function createTable()
+    # {   
+    
+    # }
+
+    # # Delete from Table function
+    # function createTable()
+    # {   
+    
+    # }
+
+    # Update into Table function
+    function updateIntoTable()
+    {   
+        read -p "Enter table name: " tableName7
+        read -p "Enter condition column name: " field
+        fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName7)
+        if [[ $fid == "" ]]
+        then echo "Not found"; secondMenu
+        else read -p "Enter condition value: " val
+            res=$(awk 'BEGIN{FS="|"} { if ($'$fid'=="'$val'") print $'$fid' }' ./DBMS/$bdName4/$tableName7 2>>./.error.log)
+            if [[ $res == "" ]]
+            then echo "Value not found"
+                secondMenu
+            else read -p "Enter field name to set: " setField
+            setFid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$setField'") print i}}}' $tableName7)
+                if [[ $setFid == "" ]]
+                then echo "Not Found"
+                    secondMenu
+                else read -p "Enter new value to set: " newValue
+                    NR=$(awk 'BEGIN{FS="|"}{if ($'$fid' == "'$val'") print NR}' $tableName7 2>>./.error.log)
+                    oldValue=$(awk 'BEGIN{FS="|"}{if(NR=='$NR'){for(i=1;i<=NF;i++){if(i=='$setFid') print $i}}}' $tableName7 2>>./.error.log)
+                    echo $oldValue
+                    sed -i ''$NR's/'$oldValue'/'$newValue'/g' $tableName7 2>>./.error.log
+                    echo "Row Updated Successfully"
+                    secondMenu
+                fi
+            fi
+        fi
+    }
+    
+    # The core of second menu function
+    while true; do
+        echo ""
+        echo "============= Hello in the DB ============="
+        echo ">>> How could we help you? "
+        echo "1. Create table"
+        echo "2. List table"           
+        echo "3. Drop table"	  	 
+        echo "4. Insert into table" 
+        echo "5. Select from table"
+        echo "6. Delete from table"
+        echo "7. Update into table"
+        echo "8. Back to Main Menu"
+        echo "9. Exit"
+        echo "================================="    
+        read -p ">>> please select a number: " secondChoice
+
+        if [[ "$secondChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+        then echo "Invalid input"
+        elif [[ "$secondChoice" -eq 1 ]]
+        then createTable
+        elif [[ "$secondChoice" -eq 2 ]]
+        then listTable
+        elif [[ "$secondChoice" -eq 3 ]]
+        then dropTable
+        elif [[ "$secondChoice" -eq 4 ]]
+        then insertIntoTable
+        elif [[ "$secondChoice" -eq 5 ]]
+        then selectFromTable
+        elif [[ "$secondChoice" -eq 6 ]]
+        then DeleteFromTable
+        elif [[ "$secondChoice" -eq 7 ]]
+        then updateIntoTable
+        elif [[ "$secondChoice" -eq 8 ]]
+        then clear; cd ../.. 2>>./.error.log; firstMenu
+        elif [[ "$secondChoice" -eq 9 ]]
+        then exit; break
+        else echo "Invalid input"
+        fi 
+    done
+}
+
+# ================================================================================
+# ================================================================================
+
+# First menu function
+function firstMenu()
+{
+    # Create DB function
+    function createDB()
+    {   
+        echo "=========== Important Notes ==========="
+        echo "- Do not use special characters"
+        echo "- Do not use numbers at the first"
+        echo "======================================="
+        read -p "Enter DB name: " dbName1
+        if [[ "$dbName1" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+        then if [[ -d "./DBMS/$dbName1" ]]
+            then echo "It's already exist, please user another name."
+            else mkdir ./DBMS/$dbName1; echo "$dbName1" DB created sucessfully.;
+            fi
+        else echo "Invaild name."
+        fi
+    }
+
+    # List DB function
+    function listDB()
+    {   
+        # echo "============================================"
+        # echo "- List the current DB --> click "Enter"."
+        # echo "- List specific DB --> enter its name."
+        # echo "============================================="    
+        # read -p "Enter DB name: " dbName2
+        # if [[ "dbName2" = "" ]]
+        # then ls -l ./DBMS ; echo "Current DB listed sucessfully"
+        # elif [[ -d "./DBMS/$dbName2" ]]
+        # then ls -l "./DBMS/$dbName2"; echo "$dbName2" listed sucessfully. 
+        # else echo "It is not exist."
+        # fi
+        ls -l ./DBMS
+        echo "Listed successfully"
+    }
+
+    # Drop DB function
+    function dropDB()
+    {   
+        read -p "Enter DB name: " dbName3
+        if [[ "$dbName3" = "" ]]
+        then echo "Empty input, please enter DB name."
+        elif [[ -d "./DBMS/$dbName3" ]]
+        then rm -rf "./DBMS/$dbName3/"; echo "$dbName3" removed sucessfully 
+        else echo "It is not exist."
+        fi
+    }
+
+    # Connect DB function
+    function connectDB()
+    {   
+        read -p "Enter DB name: " dbName4
+        if [[ "$dbName4" = "" ]]
+        then echo "Empty input, please enter DB name."
+        elif [[ -d "./DBMS/$dbName4" ]]
+        then cd "./DBMS/$dbName4"; echo "Connected successfully to $dbName4" DB; secondMenu
+        else echo "It is not exist."
+        fi
+    }
+
+    # The core of first menu function
+    mkdir DBMS 2>> ./.error.log
+    clear
+    while true; do
+        echo ""
+        echo "============= Hello to our DBMS ============="
+        echo ">>> How could we help you? "
+        echo "1. Create DB"
+        echo "2. List DB"
+        echo "3. Drop DB"
+        echo "4. Connect DB"
+        echo "5. Exit"
+        echo "=============================================="    
+        read -p ">>> please select a number: " firstChoice
+        if [[ "$firstChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+        then echo "Invalid input"
+        elif [[ "$firstChoice" -eq 1 ]]
+        then createDB
+        elif [[ "$firstChoice" -eq 2 ]]
+        then listDB
+        elif [[ "$firstChoice" -eq 3 ]]
+        then dropDB
+        elif [[ "$firstChoice" -eq 4 ]]
+        then connectDB
+        elif [[ "$firstChoice" -eq 5 ]]
+        then exit; break
+        else echo "Invalid input"
+        fi 
+    done
+}
+
+firstMenu
+
+
+
+
