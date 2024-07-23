@@ -149,10 +149,26 @@
 	    # {   
 	    # }
 
-	    # # Delete from Table function
-	    # function createTable()
-	    # {   
-	    # }
+	   # Delete from Table function
+	    function DeleteFromTable()
+	    {   
+			read -p "Enter table Name: " tableName6
+			read -p "Enter condition column name: " field
+			fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName6)
+			if [[ $fid == "" ]]
+			then echo "Not found"; secondMenu
+			else read -p "Enter condition value: " val
+				res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print $'$fid'}' $tableName6 2>>./.error.log)
+				if [[ $res == "" ]]
+				then echo "Value not found"; secondMenu
+				else NR=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print NR}' $tableName6 2>>./.error.log)
+					sed -i ''$NR'd' $tableName6 2>>./.error.log
+					echo "Row no. $NR deleted successfully"
+					secondMenu
+				fi
+			fi
+	    }
+
 
 	    # Update into Table function
 	    function updateIntoTable()
