@@ -1,143 +1,48 @@
 #! /user/bin/bash
-function createDb {
-    read -p "Enter your Name: " dbname
-    if [[ $dbname = "" ]] ;then 
-        echo "please enter name to DBMS"
-    elif [[ $dbname =~ [/.:~#*\|\-] ]];then
-        echo "plese donot enter spcial charter"
-    elif [[ $dbname =~ ^[+(0-9)] ]];then
-        echo "please enter name not star with number"
-    elif [[ -e $dbname ]];then
-        echo "this data base all already exists"
-    elif [[ $dbname =~ ^[a-zA-Z] ]];then 
-        mkdir $dbname
-    fi
-}
 
-function listDb {
-    read -p "Enter your Name: " ls
-    if [[ $ls = "" ]]
-    then
-    ls -l
-    elif [[ $ls = -l ]]
-    then
-    ls -l
-    elif [[ $ls = -a ]]
-    then
-    ls -a
-    elif [[ $ls = -t ]]
-    then
-    ls -t
-    elif [[ $ls = -r ]]
-    then
-    ls -r
-    elif [[ $ls = -S ]]
-    then
-    ls -S
-    elif [[ $ls = -R ]]
-    then
-    ls -R
-    elif [[ $ls = -i ]]
-    then
-    ls -i
-    elif [[ $ls = -g ]]
-    then
-    ls -g
-    elif [[ $ls = -h ]]
-    then
-    ls -h
-    elif [[ $ls = -d ]]
-    then
-    ls -d
-    else 
-    echo "enter thing relateve ls"
-    fi
-}
-function createtable {
-    read -p "Enter your Name: " table
-    if [[ $table = "" ]] ;then 
-        echo "please enter name to table"
-    elif [[ $table =~ [/.:~#*\|\-] ]];then
-        echo "plese donot enter spcial charter"
-    elif [[ $table =~ ^[+(0-9)] ]];then
-        echo "please enter name not star with number"
-    elif [[ -e $table ]];then
-        echo "this table all already exists"
-    elif [[ $table =~ ^[a-zA-Z] ]];then 
-        touch $table
-    fi
+function secondMenu(){   
+	   
 
-    if [[ -f $table ]]; then
-        valid=true
-        while $valid ;do
-            read -p  "enter number of colums: " numcol
-            if [[ $numcol = +([1-9])*([0-9]) ]];then
-                valid=false
-            fi
-        done
-        valid=true
-        while $valid;do
-            read -p "enter name of pk: " pk
-            if [[ $pk = "" ]] ;then 
-                echo "please enter name to pk"
-            elif [[ $pk =~ [/.:~#*\|\-] ]];then
-                echo "plese donot enter spcial charter"
-            elif [[ $pk =~ ^[+(0-9)] ]];then
-                echo "please enter name not star with number"
-            elif [[ -e $pk ]];then
-                echo "this data base all already exists"
-            elif [[ $pk =~ ^[a-zA-Z] ]];then 
-                echo -n "$pk" >> "$table"
-                echo -n "-" >> "$table"
-                valid=false
+    function createtable {
+        read -p "Enter your Name: " table
+        if [[ $table = "" ]] ;then 
+            echo "please enter name to table"
+        elif [[ $table =~ [/.:~#*\|\-] ]];then
+            echo "plese donot enter spcial charter"
+        elif [[ $table =~ ^[+(0-9)] ]];then
+            echo "please enter name not star with number"
+        elif [[ -e $table ]];then
+            echo "this table all already exists"
+        elif [[ $table =~ ^[a-zA-Z] ]];then 
+            touch $table
+        fi
 
-            fi
-        done
-
-        valid=true
-        while $valid; do
-            read -p "enter int or str: " option
-                if [[ "$option" = "int" || "$option" = "str" ]]; then
-                    echo -n "$option" >> "$table"
+        if [[ -f $table ]]; then
+            valid=true
+            while $valid ;do
+                read -p  "enter number of colums: " numcol
+                if [[ $numcol = +([1-9])*([0-9]) ]];then
+                    valid=false
+                fi
+            done
+            valid=true
+            while $valid;do
+                read -p "enter name of pk: " pk
+                if [[ $pk = "" ]] ;then 
+                    echo "please enter name to pk"
+                elif [[ $pk =~ [/.:~#*\|\-] ]];then
+                    echo "plese donot enter spcial charter"
+                elif [[ $pk =~ ^[+(0-9)] ]];then
+                    echo "please enter name not star with number"
+                elif [[ -e $pk ]];then
+                    echo "this data base all already exists"
+                elif [[ $pk =~ ^[a-zA-Z] ]];then 
+                    echo -n "$pk" >> "$table"
                     echo -n "-" >> "$table"
                     valid=false
-                else
-                    echo  "please enter in int or str"
+
                 fi
-
-        done
-
-        valid=true
-        while $valid; do
-            read -p "enter size of file: " sizefiled
-            if [[ $sizefiled = +([1-9])*([0-9]) ]]; then
-                echo -n "$sizefiled" >> "$table"
-                echo -n ":" >> "$table"
-                valid=false
-            else
-                echo  "please enter number"
-            fi
-        done
-
-        for(( i = 1; i < $numcol; i++ ));do
-        valid=true
-            while $valid;
-            do
-            read -p "enter name field: " namefield
-                if [[ $namefield = "" ]];then
-                echo "please enter name to field"
-                elif [[ $namefield  =~ [/.:~#*\|\-] ]];then
-                echo "plese donot enter spcial charte"
-                elif [[ $namefield  =~ ^[a-zA-Z] ]];then
-                echo -n "$namefield" >> "$table"
-                echo -n "-" >> "$table"
-                else
-                echo "something is wrong in name field"
-                fi
-                valid=false
             done
-
-
 
             valid=true
             while $valid; do
@@ -154,447 +59,594 @@ function createtable {
 
             valid=true
             while $valid; do
-                read -p "enter size: " fieldsize
-                if [[ $fieldsize = +([1-9])*([0-9]) ]]; then
-                    echo -n "$fieldsize" >> "$table"
+                read -p "enter size of field pk: " sizefiled
+                if [[ $sizefiled = +([1-9])*([0-9]) ]]; then
+                    echo -n "$sizefiled" >> "$table"
                     echo -n ":" >> "$table"
-                    if [[ i -eq $numcol-1 ]]; then
-                    echo 'finsh' >> "$table"
-                    echo "ever thing is save"
-                    fi
                     valid=false
                 else
                     echo  "please enter number"
                 fi
             done
 
-    done
-    else
-    echo "wrong input"
-    fi
-}
-
-
-function insertIntoTable {
-    read -p "enter name table: " table
-    if ! [[ -f $table ]];then
-        echo "table is not exitst"
-    else
-        Insert=true
-        while $Insert; do
-			echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
-            read
-            pk_used=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -e "$REPLY") 
-            
- # check_type start
-                        # check_type=$(check_dataType "$REPLY" "$table" 1)
-                        datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
-                            if [[ "$REPLY" = '' ]]; then
-                                dt=1
-                            elif [[ "$REPLY" = -?(0) ]]; then
-                                dt=0 # error!
-                            elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
-                                if [[ $datatype == int ]]; then
-                                    # datatype integer and the input is integer
-                                    dt=1
-                                else
-                                    # datatype string and input is integer
-                                    dt=1
-                                fi
-                            else
-                                if [[ $datatype == int ]]; then
-                                    # datatype integer and input is string
-                                    dt=0 # error!
-                                else
-                                    # datatype string and input is string
-                                    dt=1
-                                fi
-                            fi
-                        # check_type end
-
-                        # check_size=$(check_size "$REPLY" "$table" 1)
-                        # check_size start
-                            datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
-                            if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
-                                ds=1
-                            else
-                                ds=0 # error
-                            fi
-                        # check_size end
-
-            
+            for(( i = 1; i < $numcol; i++ ));do
+            valid=true
+                while $valid;
+                do
+                read -p "enter name field: " namefield
+                    if [[ $namefield = "" ]];then
+                    echo "please enter name to field"
+                    elif [[ $namefield  =~ [/.:~#*\|\-] ]];then
+                    echo "plese donot enter spcial charte"
+                    elif [[ $namefield  =~ ^[a-zA-Z] ]];then
+                    echo -n "$namefield" >> "$table"
+                    echo -n "-" >> "$table"
+                    else
+                    echo "something is wrong in name field"
+                    fi
+                    valid=false
+                done
 
 
 
-
-
-
-
-            if [[ $REPLY = "" ]] ;then 
-                echo "please enter name to DBMS"
-            elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
-                echo "plese donot enter spcial charter"
-            elif [[ $dt == 0 ]];then
-                echo "error in type"
-            elif [[ $ds == 0 ]];then
-                echo "error in size"
-            elif ! [[ "$pk_used" == '' ]]; then
-				echo "pk is already exit"
-            else
-                echo -n "$REPLY" >> "$table"
-				echo -n ':' >> "$table"
-                num_col=$(head -1 "$table" | awk -F: '{print NF}')
-
-                for (( i=2 ; i <= num_col; i++ ));do
-                    insertdata=true
-                    while $insertdata ; do
-                        echo "enter "$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')" of type $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')"
-                        read
-
-
-                        # check_type start
-                        # check_type=$(check_dataType "$REPLY" "$table" 1)
-                        datatype=$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" '{print $2}')
-                            if [[ "$REPLY" = '' ]]; then
-                                dt=1
-                            elif [[ "$REPLY" = -?(0) ]]; then
-                                dt=0 # error!
-                            elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
-                                if [[ $datatype == int ]]; then
-                                    # datatype integer and the input is integer
-                                    dt=1
-                                else
-                                    # datatype string and input is integer
-                                    dt=0
-                                fi
-                            else
-                                if [[ $datatype == int ]]; then
-                                    # datatype integer and input is string
-                                    dt=0 # error!
-                                else
-                                    # datatype string and input is string
-                                    dt=1
-                                fi
-                            fi
-                        # check_type end
-
-                        # check_size=$(check_size "$REPLY" "$table" 1)
-                        # check_size start
-                            datasize=$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
-                            if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
-                                ds=1
-                            else
-                                ds=0 # error
-                            fi
-                        # check_size end
-
-
-                        if [[ $dt == 0 ]];then
-                            echo "error type"
-                        elif [[ $ds == 0 ]];then
-                            echo "error in size"
-                        elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
-                            echo "plese donot enter spcial charter"
+                valid=true
+                while $valid; do
+                    read -p "enter int or str: " option
+                        if [[ "$option" = "int" || "$option" = "str" ]]; then
+                            echo -n "$option" >> "$table"
+                            echo -n "-" >> "$table"
+                            valid=false
                         else
-                            if [[ i -eq $num_col ]];then
-                                echo "$REPLY" >> "$table"
-								insertdata=false
-								Insert=false
-                            else
-                                echo -n "$REPLY": >> "$table"
-								insertdata=false
-                            fi
+                            echo  "please enter in int or str"
                         fi
 
-
-                    done
                 done
-            fi
+
+                valid=true
+                while $valid; do
+                    read -p "enter size: " fieldsize
+                    if [[ $fieldsize = +([1-9])*([0-9]) ]]; then
+                        echo -n "$fieldsize" >> "$table"
+                        echo -n ":" >> "$table"
+                        if [[ i -eq $numcol-1 ]]; then
+                        echo '' >> "$table"
+                        echo "ever thing is save"
+                        fi
+                        valid=false
+                    else
+                        echo  "please enter number"
+                    fi
+                done
+
         done
-    fi
-}
-function deleteRecord {
-    read -p "enter name table : " table
-    if ! [[ -f $table ]]; then
-        echo "this table donot exist"
-    else
-		echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
-        read
-        recordNum=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -n -e "$REPLY" | cut -d':' -f1)
-        if [[ $REPLY == '' ]];then
-            echo "please enter number"
-        elif [[ $recordNum = '' ]];then
-            echo "this number not exit"
         else
-            recordNum=$(($recordNum + 1))
-            sed -i "${recordNum}d" "$table"
-            echo "successfully"
+        echo "wrong input"
+        fi
+    }
+
+
+    function insertIntoTable {
+        read -p "enter name table: " table
+        if ! [[ -f $table ]];then
+            echo "table is not exitst"
+        else
+            Insert=true
+            while $Insert; do
+                echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
+                read
+                pk_used=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -e "$REPLY") 
+                
+        # check_type start
+                            # check_type=$(check_dataType "$REPLY" "$table" 1)
+                            datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
+                                if [[ "$REPLY" = '' ]]; then
+                                    dt=1
+                                elif [[ "$REPLY" = -?(0) ]]; then
+                                    dt=0 # error!
+                                elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
+                                    if [[ $datatype == int ]]; then
+                                        # datatype integer and the input is integer
+                                        dt=1
+                                    else
+                                        # datatype string and input is integer
+                                        dt=1
+                                    fi
+                                else
+                                    if [[ $datatype == int ]]; then
+                                        # datatype integer and input is string
+                                        dt=0 # error!
+                                    else
+                                        # datatype string and input is string
+                                        dt=1
+                                    fi
+                                fi
+                            # check_type end
+
+                            # check_size=$(check_size "$REPLY" "$table" 1)
+                            # check_size start
+                                datasize=$(head -1 $table | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
+                                if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
+                                    ds=1
+                                else
+                                    ds=0 # error
+                                fi
+                            # check_size end
+
+                
+
+
+
+
+
+
+
+                if [[ $REPLY = "" ]] ;then 
+                    echo "please enter name to DBMS"
+                elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
+                    echo "plese donot enter spcial charter"
+                elif [[ $dt == 0 ]];then
+                    echo "error in type"
+                elif [[ $ds == 0 ]];then
+                    echo "error in size"
+                elif ! [[ "$pk_used" == '' ]]; then
+                    echo "pk is already exit"
+                else
+                    echo -n "$REPLY" >> "$table"
+                    echo -n ':' >> "$table"
+                    num_col=$(head -1 "$table" | awk -F: '{print NF}')
+
+                    for (( i=2 ; i <= num_col; i++ ));do
+                        insertdata=true
+                        while $insertdata ; do
+                            echo "enter "$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')" of type $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table" | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')"
+                            read
+
+
+                            # check_type start
+                            # check_type=$(check_dataType "$REPLY" "$table" 1)
+                            datatype=$(head -1 "$table" | cut -d ':' -f$i | awk -F "-" '{print $2}')
+                                if [[ "$REPLY" = '' ]]; then
+                                    dt=1
+                                elif [[ "$REPLY" = -?(0) ]]; then
+                                    dt=0 # error!
+                                elif [[ "$REPLY" = ?(-)+([0-9])?(.)*([0-9]) ]]; then
+                                    if [[ $datatype == int ]]; then
+                                        # datatype integer and the input is integer
+                                        dt=1
+                                    else
+                                        # datatype string and input is integer
+                                        dt=0
+                                    fi
+                                else
+                                    if [[ $datatype == int ]]; then
+                                        # datatype integer and input is string
+                                        dt=0 # error!
+                                    else
+                                        # datatype string and input is string
+                                        dt=1
+                                    fi
+                                fi
+                            # check_type end
+
+                            # check_size=$(check_size "$REPLY" "$table" 1)
+                            # check_size start
+                                datasize=$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $3}')
+                                if [[ "${#REPLY}" -le $datasize || "${#REPLY}" -eq $datasize ]]; then
+                                    ds=1
+                                else
+                                    ds=0 # error
+                                fi
+                            # check_size end
+
+
+                            if [[ $dt == 0 ]];then
+                                echo "error type"
+                            elif [[ $ds == 0 ]];then
+                                echo "error in size"
+                            elif [[ $REPLY =~ [/.:~#*\|\-] ]];then
+                                echo "plese donot enter spcial charter"
+                            else
+                                if [[ i -eq $num_col ]];then
+                                    echo "$REPLY" >> "$table"
+                                    insertdata=false
+                                    Insert=false
+                                else
+                                    echo -n "$REPLY": >> "$table"
+                                    insertdata=false
+                                fi
+                            fi
+
+
+                        done
+                    done
+                fi
+            done
+        fi
+    }
+
+    function deleteRecord {
+        read -p "enter name table : " table
+        if ! [[ -f $table ]]; then
+            echo "this table donot exist"
+        else
+            echo "enter primary key "$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $1}')" of type $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}') and size $(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $3}')"
+            read
+            recordNum=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -n -e "$REPLY" | cut -d':' -f1)
+            if [[ $REPLY == '' ]];then
+                echo "please enter number"
+            elif [[ $recordNum = '' ]];then
+                echo "this number not exit"
+            else
+                recordNum=$(($recordNum + 1))
+                sed -i "${recordNum}d" "$table"
+                echo "successfully"
+                
+            fi
+        fi 
+    }
+
+
+    # Update into Table function
+    # updateIntoTable() {
+    #     read -p "Enter table name: " tableName7
+    #     read -p "Enter condition column name: " field
+        
+    #     # Find the index of the condition column
+    #     fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
+    #     if [[ -z $fid ]]; then
+    #         echo "Condition column not found"
+    #         return
+    #     fi
+
+    #     read -p "Enter condition value: " val
+        
+    #     # Find the record number that matches the condition value
+    #     recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
+    #     if [[ -z $recordNum ]]; then
+    #         echo "Condition value not found"
+    #         return
+    #     fi
+
+    #     read -p "Enter field name to set: " setField
+        
+    #     # Find the index of the field to update
+    #     setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
+    #     if [[ -z $setFid ]]; then
+    #         echo "Field to set not found"
+    #         return
+    #     fi
+
+    #     read -p "Enter new value to set: " newValue
+        
+    #     # Extract the old value
+    #     oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
+    #     echo "Old Value: $oldValue"
+
+    #     # Update the file with the new value
+    #     sed -i "${recordNum}s/\([^:]*:\)\{$((setFid-1))\}${oldValue}/\1$newValue/" "$tableName7"
+    #     echo "Row Updated Successfully"
+    # }
+
+    updateIntoTable() {
+        read -p "Enter table name: " tableName7
+        read -p "Enter condition column name: " field
+        
+        # Find the index of the condition column
+        fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
+        if [[ -z $fid ]]; then
+            echo "Condition column not found"
+            return
+        fi
+
+        read -p "Enter condition value: " val
+
+        # Check data type of condition value
+        if [[ $(check_dataType "$val" "$tableName7" "$fid") -eq 0 ]]; then
+            echo "Invalid data type for condition value"
+            return
+        fi
+        
+        # Find the record number that matches the condition value
+        recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
+        if [[ -z $recordNum ]]; then
+            echo "Condition value not found"
+            return
+        fi
+
+        read -p "Enter field name to set: " setField
+        
+        # Find the index of the field to update
+        setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
+        if [[ -z $setFid ]]; then
+            echo "Field to set not found"
+            return
+        fi
+
+        read -p "Enter new value to set: " newValue
+        
+        # Check data type of new value
+        if [[ $(check_dataType "$newValue" "$tableName7" "$setFid") -eq 0 ]]; then
+            echo "Invalid data type for new value"
+            return
+        fi
+        
+        # Extract the old value
+        oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
+        echo "Old Value: $oldValue"
+
+        # Update the file with the new value
+        # Use awk to update the specific field in the record
+        awk -v recordNum="$recordNum" -v setFid="$setFid" -v newValue="$newValue" -F":" '
+        BEGIN {OFS=":"}
+        NR == recordNum {$setFid = newValue}
+        {print}
+        ' "$tableName7" > tmpfile && mv tmpfile "$tableName7"
+        
+        echo "Row Updated Successfully"
+    }
+
+    # Function to check the data type
+    check_dataType() {
+        datatype=$(head -1 "$2" | cut -d ':' -f$3 | awk -F "-" '{print $2}')
+        
+        case $datatype in
+            "int")
+                # Check if the input is a valid integer
+                if [[ "$1" =~ ^-?[0-9]+$ ]]; then
+                    echo 1
+                else
+                    echo 0
+                fi
+                ;;
+            "str")
+                # Check if the input is a string (non-empty)
+                if [[ -n "$1" && ! "$1" =~ ^-?[0-9]+$ ]]; then
+                    echo 1
+                else
+                    echo 0
+                fi
+                ;;
+            *)
+                # If datatype is not recognized
+                echo 0
+                ;;
+        esac
+    }
+
+
+
+    function Select {
+        read -p "enrer name table : " table
+
+        if ! [[ -f "$table" ]]; then
+            echo -e "table do not exist"
+        else
+
+            echo enter primary key \"$(head -1 "$table" | cut -d ':' -f1 |\
+            awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" of type $(head -1 "$table"\
+            | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table"\
+            | cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}') of the record
+            read
+            
+            recordNum=$(cut -d ':' -f1 "$table" | sed '1d'\
+            | grep -x -n -e "$REPLY" | cut -d':' -f1)
+
+            if [[ "$REPLY" == '' ]]; then
+                echo  "please enter pk"
+
+            elif [[ "$recordNum" = '' ]]; then
+                echo -e "pk do not exist"
+
+            else
+                let recordNum=$recordNum+1
+                num_col=$(head -1 "$table" | awk -F: '{print NF}') 
+
+                
+                echo "fields and values of this record:"
+                for (( i = 2; i <= num_col; i++ )); do
+                        echo \"$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" : $(sed -n "${recordNum}p" "$table" | cut -d: -f$i)
+                done
+                
+            fi
             
         fi
-    fi 
-}
+    }
+
+    function dropTable(){
+        read -p "Enter table name: " tableName3
+        if [[ "$tableName3" = "" ]]
+        then echo "Empty input, please enter table name."
+        elif [[ -f "$tableName3" ]]
+        then rm -rf "$tableName3"; rm -rf ".$tableName3"; echo "$tableName3" table removed sucessfully 
+        else echo "It is not exist."
+        fi   
+    }
 
 
-# Update into Table function
-# updateIntoTable() {
-#     read -p "Enter table name: " tableName7
-#     read -p "Enter condition column name: " field
-    
-#     # Find the index of the condition column
-#     fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
-#     if [[ -z $fid ]]; then
-#         echo "Condition column not found"
-#         return
-#     fi
+    function displayTable {
+        ##########
+        # choose table
+        read -p "enter name of the table : " dbtable
+        ##########
+        # not exist
+        if ! [[ -f "$dbtable" ]]; then
+            echo -e "this table do not exist"
 
-#     read -p "Enter condition value: " val
-    
-#     # Find the record number that matches the condition value
-#     recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
-#     if [[ -z $recordNum ]]; then
-#         echo "Condition value not found"
-#         return
-#     fi
+        else
+            ##########
+            ## table exists
+            ##########
+            # display table's data
+            echo "------------------------------------------------------------"
+            head -1 "$dbtable" | awk 'BEGIN{ RS = ":"; FS = "-" } {print $1}' | awk 'BEGIN{ORS="\t"} {print $0}'
+            echo -e "\n------------------------------------------------------------"
+            sed '1d' "$dbtable" | awk -F: 'BEGIN{OFS="\t"} {for(n = 1; n <= NF; n++) $n=$n}  1'
+        fi
+    }
 
-#     read -p "Enter field name to set: " setField
-    
-#     # Find the index of the field to update
-#     setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
-#     if [[ -z $setFid ]]; then
-#         echo "Field to set not found"
-#         return
-#     fi
+    function listTable(){
+        ls -l;
+        echo "Listed successfully"
+    }
 
-#     read -p "Enter new value to set: " newValue
-    
-#     # Extract the old value
-#     oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
-#     echo "Old Value: $oldValue"
 
-#     # Update the file with the new value
-#     sed -i "${recordNum}s/\([^:]*:\)\{$((setFid-1))\}${oldValue}/\1$newValue/" "$tableName7"
-#     echo "Row Updated Successfully"
-# }
+	    # The core of second menu function
+	    while true; do
+		echo ""
+		echo "============= Hello in the DB ============="
+		echo ">>> How could we help you? "
+		echo "1. Create table"
+		echo "2. List table"           
+		echo "3. Drop table"	  	 
+		echo "4. Insert into table" 
+		echo "5. Select from table"
+		echo "6. Delete from table"
+		echo "7. Update into table"
+        echo "8. Update into table"
+		echo "9. Back to Main Menu"
+		echo "10. Exit"
+		echo "================================="    
+		read -p ">>> please select a number: " secondChoice
 
-updateIntoTable() {
-    read -p "Enter table name: " tableName7
-    read -p "Enter condition column name: " field
-    
-    # Find the index of the condition column
-    fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
-    if [[ -z $fid ]]; then
-        echo "Condition column not found"
-        return
-    fi
-
-    read -p "Enter condition value: " val
-
-    # Check data type of condition value
-    if [[ $(check_dataType "$val" "$tableName7" "$fid") -eq 0 ]]; then
-        echo "Invalid data type for condition value"
-        return
-    fi
-    
-    # Find the record number that matches the condition value
-    recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
-    if [[ -z $recordNum ]]; then
-        echo "Condition value not found"
-        return
-    fi
-
-    read -p "Enter field name to set: " setField
-    
-    # Find the index of the field to update
-    setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
-    if [[ -z $setFid ]]; then
-        echo "Field to set not found"
-        return
-    fi
-
-    read -p "Enter new value to set: " newValue
-    
-    # Check data type of new value
-    if [[ $(check_dataType "$newValue" "$tableName7" "$setFid") -eq 0 ]]; then
-        echo "Invalid data type for new value"
-        return
-    fi
-    
-    # Extract the old value
-    oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
-    echo "Old Value: $oldValue"
-
-    # Update the file with the new value
-    # Use awk to update the specific field in the record
-    awk -v recordNum="$recordNum" -v setFid="$setFid" -v newValue="$newValue" -F":" '
-    BEGIN {OFS=":"}
-    NR == recordNum {$setFid = newValue}
-    {print}
-    ' "$tableName7" > tmpfile && mv tmpfile "$tableName7"
-    
-    echo "Row Updated Successfully"
-}
-
-# Function to check the data type
-check_dataType() {
-    datatype=$(head -1 "$2" | cut -d ':' -f$3 | awk -F "-" '{print $2}')
-    
-    case $datatype in
-        "int")
-            # Check if the input is a valid integer
-            if [[ "$1" =~ ^-?[0-9]+$ ]]; then
-                echo 1
-            else
-                echo 0
-            fi
-            ;;
-        "str")
-            # Check if the input is a string (non-empty)
-            if [[ -n "$1" && ! "$1" =~ ^-?[0-9]+$ ]]; then
-                echo 1
-            else
-                echo 0
-            fi
-            ;;
-        *)
-            # If datatype is not recognized
-            echo 0
-            ;;
-    esac
+		if [[ "$secondChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+		then echo "Invalid input"
+		elif [[ "$secondChoice" -eq 1 ]]
+		then createtable
+		elif [[ "$secondChoice" -eq 2 ]]
+		then listTable
+		elif [[ "$secondChoice" -eq 3 ]]
+		then dropTable
+		elif [[ "$secondChoice" -eq 4 ]]
+		then insertIntoTable
+		elif [[ "$secondChoice" -eq 5 ]]
+		then Select
+		elif [[ "$secondChoice" -eq 6 ]]
+		then deleteRecord
+		elif [[ "$secondChoice" -eq 7 ]]
+		then updateIntoTable
+        elif [[ "$secondChoice" -eq 8 ]]
+		then displayTable
+		elif [[ "$secondChoice" -eq 9 ]]
+		then clear; cd ../.. 2>>./.error.log; firstMenu
+		elif [[ "$secondChoice" -eq 10 ]]
+		then exit; break
+		else echo "Invalid input"
+		fi 
+	    done
 }
 
 
 
-function Select {
-    read -p "enrer name table : " table
 
-	if ! [[ -f "$table" ]]; then
-		echo -e "table do not exist"
-	else
 
-		echo enter primary key \"$(head -1 "$table" | cut -d ':' -f1 |\
-		awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" of type $(head -1 "$table"\
-		| cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table"\
-		| cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}') of the record
-		read
-		
-		recordNum=$(cut -d ':' -f1 "$table" | sed '1d'\
-		| grep -x -n -e "$REPLY" | cut -d':' -f1)
+function firstMenu(){
+    
+    function createDb {
+        read -p "Enter your Name: " dbname
+        if [[ $dbname = "" ]] ;then 
+            echo "please enter name to DBMS"
+        elif [[ $dbname =~ [/.:~#*\|\-] ]];then
+            echo "plese donot enter spcial charter"
+        elif [[ $dbname =~ ^[+(0-9)] ]];then
+            echo "please enter name not star with number"
+        elif [[ -e $dbname ]];then
+            echo "this data base all already exists"
+        elif [[ $dbname =~ ^[a-zA-Z] ]];then 
+            mkdir $dbname
+        fi
+    }
 
-		if [[ "$REPLY" == '' ]]; then
-			echo  "please enter pk"
+    function listDb {
+        read -p "Enter your Name: " ls
+        if [[ $ls = "" ]]
+        then
+        ls -l
+        elif [[ $ls = -l ]]
+        then
+        ls -l
+        elif [[ $ls = -a ]]
+        then
+        ls -a
+        elif [[ $ls = -t ]]
+        then
+        ls -t
+        elif [[ $ls = -r ]]
+        then
+        ls -r
+        elif [[ $ls = -S ]]
+        then
+        ls -S
+        elif [[ $ls = -R ]]
+        then
+        ls -R
+        elif [[ $ls = -i ]]
+        then
+        ls -i
+        elif [[ $ls = -g ]]
+        then
+        ls -g
+        elif [[ $ls = -h ]]
+        then
+        ls -h
+        elif [[ $ls = -d ]]
+        then
+        ls -d
+        else 
+        echo "enter thing relateve ls"
+        fi
+    }
 
-		elif [[ "$recordNum" = '' ]]; then
-			echo -e "pk do not exist"
+    function dropDB(){   
+        read -p "Enter DB name: " dbName3
+        if [[ "$dbName3" = "" ]]
+        then echo "Empty input, please enter DB name."
+        elif [[ -d "$dbName3" ]]
+        then rm -rf "$dbName3/"; echo "$dbName3" removed sucessfully 
+        else echo "It is not exist."
+        fi
+    }
 
-		else
-			let recordNum=$recordNum+1
-			num_col=$(head -1 "$table" | awk -F: '{print NF}') 
 
-			
-			echo "fields and values of this record:"
-			for (( i = 2; i <= num_col; i++ )); do
-					echo \"$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" : $(sed -n "${recordNum}p" "$table" | cut -d: -f$i)
-			done
-			
+    function connectDB(){   
+		read -p "Enter DB name: " dbName4
+		if [[ "$dbName4" = "" ]]
+		then echo "Empty input, please enter DB name."
+		elif [[ -d "./$dbName4" ]]
+		then cd "./$dbName4"; echo "Connected successfully to $dbName4" DB; secondMenu
+        echo `pwd`
+		else echo "It is not exist."
 		fi
-		
-	fi
+	}
+
+	    # The core of first menu function
+	    mkdir DBMS 2>> ./.error.log
+	    clear
+	    while true; do
+		echo ""
+		echo "============= Hello to our DBMS ============="
+		echo ">>> How could we help you? "
+		echo "1. Create DB"
+		echo "2. List DB"
+		echo "3. Drop DB"
+		echo "4. Connect DB"
+		echo "5. Exit"
+		echo "=============================================="    
+		read -p ">>> please select a number: " firstChoice
+		if [[ "$firstChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+		then echo "Invalid input"
+		elif [[ "$firstChoice" -eq 1 ]]
+		then createDb 
+		elif [[ "$firstChoice" -eq 2 ]]
+		then listDB
+		elif [[ "$firstChoice" -eq 3 ]]
+		then dropDB
+		elif [[ "$firstChoice" -eq 4 ]]
+		then connectDB
+		elif [[ "$firstChoice" -eq 5 ]]
+		then exit; break
+		else echo "Invalid input"
+		fi 
+	    done
 }
 
-function dropTable(){
-    read -p "Enter table name: " tableName3
-    if [[ "$tableName3" = "" ]]
-    then echo "Empty input, please enter table name."
-    elif [[ -f "$tableName3" ]]
-    then rm -rf "$tableName3"; rm -rf ".$tableName3"; echo "$tableName3" table removed sucessfully 
-    else echo "It is not exist."
-    fi   
-}
-
-
-function displayTable {
-	##########
-	# choose table
-    read -p "enter name of the table : " dbtable
-	##########
-	# not exist
-	if ! [[ -f "$dbtable" ]]; then
-		echo -e "this table do not exist"
-
-	else
-		##########
-		## table exists
-		##########
-		# display table's data
-		echo "------------------------------------------------------------"
-		head -1 "$dbtable" | awk 'BEGIN{ RS = ":"; FS = "-" } {print $1}' | awk 'BEGIN{ORS="\t"} {print $0}'
-		echo -e "\n------------------------------------------------------------"
-		sed '1d' "$dbtable" | awk -F: 'BEGIN{OFS="\t"} {for(n = 1; n <= NF; n++) $n=$n}  1'
-	fi
-}
-
-function listTable(){
-ls -l;
-echo "Listed successfully"
-}
-
-
-
-function dropDB(){   
-    read -p "Enter DB name: " dbName3
-    if [[ "$dbName3" = "" ]]
-    then echo "Empty input, please enter DB name."
-    elif [[ -d "$dbName3" ]]
-    then rm -rf "$dbName3/"; echo "$dbName3" removed sucessfully 
-    else echo "It is not exist."
-    fi
-}
-
-
-echo "============= Hello to our DBMS ============="
-echo ">>> How could we help you? 
-1. Create DB
-2. List DB
-3. Drop DB
-4. Connect DB
-================================="    
-read -p ">>> please select a number: " firstChoice
-if [[ $firstChoice == 1 ]] ; then
-    createDb
-elif [[ $firstChoice == 2 ]] ; then
-    listDb
-elif [[ $firstChoice == 3 ]] ; then
-    dropDB
-elif [[ $firstChoice == 4 ]] ; then
-    echo "Connect DB"
-fi
-
-
-
-echo "============= Hello to our DBMS ============="
-echo ">>> How could we help you? 
-1. Create Table 
-2. List Tables
-3. Drop Table
-4. Insert into Table
-5. Select From Table
-6. Delete From Table
-7. Update Table
-================================="    
-read -p ">>> please select a number: " secondChoice
-if [[ $secondChoice == 1 ]] ; then
-    createtable
-elif [[ $secondChoice == 2 ]] ; then
-    listTable
-elif [[ $secondChoice == 3 ]] ; then
-    dropTable
-elif [[ $secondChoice == 4 ]] ; then
-    insertIntoTable
-
-elif [[ $secondChoice == 5 ]] ; then
-    Select
-elif [[ $secondChoice == 6 ]] ; then
-    deleteRecord
-elif [[ $secondChoice == 7 ]] ; then
-    updateIntoTable
-fi
+firstMenu
