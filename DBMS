@@ -186,7 +186,7 @@ function insertIntoTable {
             read
             pk_used=$(cut -d ':' -f1 "$table" | awk '{if(NR != 1) print $0}' | grep -x -e "$REPLY") 
             
-# check_type start
+ # check_type start
                         # check_type=$(check_dataType "$REPLY" "$table" 1)
                         datatype=$(head -1 "$table" | cut -d ':' -f1 | awk -F "-" '{print $2}')
                             if [[ "$REPLY" = '' ]]; then
@@ -336,45 +336,45 @@ function deleteRecord {
 
 
 # Update into Table function
-updateIntoTable() {
-    read -p "Enter table name: " tableName7
-    read -p "Enter condition column name: " field
+# updateIntoTable() {
+#     read -p "Enter table name: " tableName7
+#     read -p "Enter condition column name: " field
     
-    # Find the index of the condition column
-    fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
-    if [[ -z $fid ]]; then
-        echo "Condition column not found"
-        return
-    fi
+#     # Find the index of the condition column
+#     fid=$(awk -v field="$field" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==field) print i}}' "$tableName7")
+#     if [[ -z $fid ]]; then
+#         echo "Condition column not found"
+#         return
+#     fi
 
-    read -p "Enter condition value: " val
+#     read -p "Enter condition value: " val
     
-    # Find the record number that matches the condition value
-    recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
-    if [[ -z $recordNum ]]; then
-        echo "Condition value not found"
-        return
-    fi
+#     # Find the record number that matches the condition value
+#     recordNum=$(awk -v fid="$fid" -v val="$val" 'BEGIN{FS=":"} $fid == val {print NR}' "$tableName7")
+#     if [[ -z $recordNum ]]; then
+#         echo "Condition value not found"
+#         return
+#     fi
 
-    read -p "Enter field name to set: " setField
+#     read -p "Enter field name to set: " setField
     
-    # Find the index of the field to update
-    setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
-    if [[ -z $setFid ]]; then
-        echo "Field to set not found"
-        return
-    fi
+#     # Find the index of the field to update
+#     setFid=$(awk -v setField="$setField" 'BEGIN{FS=":"} NR==1 {for(i=1;i<=NF;i++){if($i==setField) print i}}' "$tableName7")
+#     if [[ -z $setFid ]]; then
+#         echo "Field to set not found"
+#         return
+#     fi
 
-    read -p "Enter new value to set: " newValue
+#     read -p "Enter new value to set: " newValue
     
-    # Extract the old value
-    oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
-    echo "Old Value: $oldValue"
+#     # Extract the old value
+#     oldValue=$(awk -v recordNum="$recordNum" -v setFid="$setFid" 'BEGIN{FS=":"} NR==recordNum {print $setFid}' "$tableName7")
+#     echo "Old Value: $oldValue"
 
-    # Update the file with the new value
-    sed -i "${recordNum}s/\([^:]*:\)\{$((setFid-1))\}${oldValue}/\1$newValue/" "$tableName7"
-    echo "Row Updated Successfully"
-}
+#     # Update the file with the new value
+#     sed -i "${recordNum}s/\([^:]*:\)\{$((setFid-1))\}${oldValue}/\1$newValue/" "$tableName7"
+#     echo "Row Updated Successfully"
+# }
 
 updateIntoTable() {
     read -p "Enter table name: " tableName7
@@ -500,4 +500,101 @@ function Select {
 		
 	fi
 }
-displayRow
+
+function dropTable(){
+    read -p "Enter table name: " tableName3
+    if [[ "$tableName3" = "" ]]
+    then echo "Empty input, please enter table name."
+    elif [[ -f "$tableName3" ]]
+    then rm -rf "$tableName3"; rm -rf ".$tableName3"; echo "$tableName3" table removed sucessfully 
+    else echo "It is not exist."
+    fi   
+}
+
+
+function displayTable {
+	##########
+	# choose table
+    read -p "enter name of the table : " dbtable
+	##########
+	# not exist
+	if ! [[ -f "$dbtable" ]]; then
+		echo -e "this table do not exist"
+
+	else
+		##########
+		## table exists
+		##########
+		# display table's data
+		echo "------------------------------------------------------------"
+		head -1 "$dbtable" | awk 'BEGIN{ RS = ":"; FS = "-" } {print $1}' | awk 'BEGIN{ORS="\t"} {print $0}'
+		echo -e "\n------------------------------------------------------------"
+		sed '1d' "$dbtable" | awk -F: 'BEGIN{OFS="\t"} {for(n = 1; n <= NF; n++) $n=$n}  1'
+	fi
+}
+
+function listTable(){
+ls -l;
+echo "Listed successfully"
+}
+
+
+
+function dropDB(){   
+    read -p "Enter DB name: " dbName3
+    if [[ "$dbName3" = "" ]]
+    then echo "Empty input, please enter DB name."
+    elif [[ -d "$dbName3" ]]
+    then rm -rf "$dbName3/"; echo "$dbName3" removed sucessfully 
+    else echo "It is not exist."
+    fi
+}
+
+
+echo "============= Hello to our DBMS ============="
+echo ">>> How could we help you? 
+1. Create DB
+2. List DB
+3. Drop DB
+4. Connect DB
+================================="    
+read -p ">>> please select a number: " firstChoice
+if [[ $firstChoice == 1 ]] ; then
+    createDb
+elif [[ $firstChoice == 2 ]] ; then
+    listDb
+elif [[ $firstChoice == 3 ]] ; then
+    dropDB
+elif [[ $firstChoice == 4 ]] ; then
+    echo "Connect DB"
+fi
+
+
+
+echo "============= Hello to our DBMS ============="
+echo ">>> How could we help you? 
+1. Create Table 
+2. List Tables
+3. Drop Table
+4. Insert into Table
+5. Select From Table
+6. Delete From Table
+7. Update Table
+================================="    
+read -p ">>> please select a number: " secondChoice
+if [[ $secondChoice == 1 ]] ; then
+    createtable
+elif [[ $secondChoice == 2 ]] ; then
+    listTable
+elif [[ $secondChoice == 3 ]] ; then
+    dropTable
+elif [[ $secondChoice == 4 ]] ; then
+    insertIntoTable
+
+elif [[ $secondChoice == 5 ]] ; then
+    Select
+elif [[ $secondChoice == 6 ]] ; then
+    deleteRecord
+elif [[ $secondChoice == 7 ]] ; then
+    updateIntoTable
+fi
