@@ -17,6 +17,10 @@
 			done
 			
 			read -p "Enter number of columns: " columnNumber
+			while ! [[ $columnNumber =~ ^[2-9]*$ ]]; do
+				echo -e "Invalid number of columns."
+				read -p "Enter number of columns: " columnNumber
+			done
 			counter=1
 			sep="|"
 			rSep="\n"
