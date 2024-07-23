@@ -464,9 +464,40 @@ check_dataType() {
 
 
 
+function Select {
+    read -p "enrer name table : " table
 
+	if ! [[ -f "$table" ]]; then
+		echo -e "table do not exist"
+	else
 
+		echo enter primary key \"$(head -1 "$table" | cut -d ':' -f1 |\
+		awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" of type $(head -1 "$table"\
+		| cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $2}') and size $(head -1 "$table"\
+		| cut -d ':' -f1 | awk -F "-" 'BEGIN { RS = ":" } {print $3}') of the record
+		read
+		
+		recordNum=$(cut -d ':' -f1 "$table" | sed '1d'\
+		| grep -x -n -e "$REPLY" | cut -d':' -f1)
 
+		if [[ "$REPLY" == '' ]]; then
+			echo  "please enter pk"
 
+		elif [[ "$recordNum" = '' ]]; then
+			echo -e "pk do not exist"
 
-updateIntoTable
+		else
+			let recordNum=$recordNum+1
+			num_col=$(head -1 "$table" | awk -F: '{print NF}') 
+
+			
+			echo "fields and values of this record:"
+			for (( i = 2; i <= num_col; i++ )); do
+					echo \"$(head -1 $table | cut -d ':' -f$i | awk -F "-" 'BEGIN { RS = ":" } {print $1}')\" : $(sed -n "${recordNum}p" "$table" | cut -d: -f$i)
+			done
+			
+		fi
+		
+	fi
+}
+displayRow
