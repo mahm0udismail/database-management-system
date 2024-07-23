@@ -90,9 +90,59 @@
 	    }
 
 	    # Insert into Table function
-	    # function createTable()
-	    # {   
-	    # }
+	    function insertIntoTable()
+	    {   
+			read -p "Enter table name: " tableName4
+			if ! [[ -f $tableName4 ]]; then
+				echo "$tableName4 table isn't exist."
+				secondMenu
+			fi
+			# get number of records
+			columnNumber=`awk 'END{print NR}' .$tableName4`
+			sep="|"
+			rSep="\n"
+			for (( i = 2; i <= $columnNumber; i++ ))
+			do
+				columnName=$(awk 'BEGIN{FS="|"}{ if(NR=='$i') print $1}' .$tableName4)
+				columnType=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $2}' .$tableName4)
+				columnKey=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $3}' .$tableName4)
+				read -p "$columnName ($columnType) = " data
+
+				# Validate Input for enter integer only
+				if [[ $columnType == "int" ]]
+				then while ! [[ $data =~ ^[1-9]*$ ]]
+					do
+						echo -e "invalid DataType !"
+						read -p "$columnName ($columnType) = " data
+					done
+				fi
+
+				if [[ $columnKey == "PK" ]]
+				then while [[ true ]]
+					do
+						if [[ $data =~ ^[`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $(('$i'-1))}' $tableName4`]$ ]]
+						then echo -e "invalid input for Primary Key !"
+						else break;
+						fi
+						read -p "$columnName ($columnType) = " data
+					done
+				fi
+
+				#Set row
+				if [[ $i == $columnNumber ]] 
+				then row=$row$data$rSep
+				else row=$row$data$sep
+				fi
+			done
+			echo -e $row"\c" >> $tableName4
+			if [[ $? == 0 ]]
+			then echo "Data Inserted Successfully"
+			else echo "Error Inserting Data into Table $tableName4"
+			fi
+			row=""
+			secondMenu
+	    }
+
 
 	    # # Select from Table function
 	    # function createTable()
