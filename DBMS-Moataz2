@@ -1,0 +1,454 @@
+	#! /usr/bin/bash
+
+	function secondMenu()
+	{   
+	    # Create Table function
+	    function createTable()
+	    {
+			echo "=========== Important Notes ==========="
+			echo "- Do not use special characters"
+			echo "- Do not use numbers at the first"
+			echo "======================================="
+			read -p "Enter table name: " tableName1
+			temp=""
+			while ! [[ "$dbName1" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]] || [[ -f "$tableName1" ]]; do
+				echo "Invaild name. or it is already exist."
+				read -p "Enter table name: " tableName1
+			done
+			
+			read -p "Enter number of columns: " columnNumber
+			counter=1
+			sep="|"
+			rSep="\n"
+			pKey=""
+			metaData="Field"$sep"Type"$sep"Key"
+				while [[ $counter -le $columnNumber ]]; do
+					read -p "Enter column $counter name: " columnName
+					while ! [[ $columnName =~ ^[a-zA-Z]+[1-9]*$ ]]
+					do
+						echo "Invalid column name!"
+						read -p "Enter column $counter name: " columnName
+					done
+
+					echo -e "Enter column $counter type: "
+					select var in "int" "str"
+					do
+						case $var in
+							int ) columnType="int"; break;;
+							str ) columnType="str"; break;; 
+							* ) echo "Wrong choice" ;; 
+						esac
+					done
+
+					if [[ $pKey == "" ]]
+					then echo -e "Make it primary key? "
+						select var in "yes" "no"
+						do
+							case $var in
+							yes) pKey="PK";
+							metaData+=$rSep$columnName$sep$columnType$sep$pKey;
+							break;;
+							no) metaData+=$rSep$columnName$sep$columnType$sep"";
+							break;;
+							* ) echo "Wrong choice" ;;
+							esac
+						done
+					else metaData+=$rSep$columnName$sep$columnType$sep""
+					fi
+
+					# handling seperator at the end
+					if [[ $counter == $columnNumber ]]
+					then temp=$temp$columnName
+					else temp=$temp$columnName$sep
+					fi
+					((counter++))
+				done
+				touch .$tableName1
+				echo -e $metaData >> .$tableName1
+				touch $tableName1
+				echo -e $temp >> $tableName1
+
+				if [[ $? == 0 ]]
+				then echo "Table created sucessfuly"
+				else echo "Error creating table $tableName1"
+				fi 
+	    }
+	    
+	    # List Table function
+	    function listTable()
+	    {
+			ls -l;
+			echo "Listed successfully"
+	    }
+
+	    # Drop Table function
+	    function dropTable()
+	    {
+			read -p "Enter table name: " tableName3
+			while ! [[ -f "$tableName3" ]]; do
+				echo "This table is not exist."
+				read -p "Enter table name: " tableName3
+			done
+			rm -rf "$tableName3"; rm -rf ".$tableName3"; echo "$tableName3" table removed sucessfully   
+	    }
+
+	    # Insert into Table function
+	    function insertIntoTable()
+	    {   
+			read -p "Enter table name: " tableName4
+			while ! [[ -f $tableName4 ]]; do
+					echo -e "This table name is not exist !"
+					read -p "Enter table name: " tableName4
+			done
+
+			# get number of records
+			columnNumber=`awk 'END{print NR}' .$tableName4`
+			sep="|"
+			rSep="\n"
+			for (( i = 2; i <= $columnNumber; i++ ))
+			do
+				columnName=$(awk 'BEGIN{FS="|"}{ if(NR=='$i') print $1}' .$tableName4)
+				columnType=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $2}' .$tableName4)
+				columnKey=$( awk 'BEGIN{FS="|"}{if(NR=='$i') print $3}' .$tableName4)
+				read -p "$columnName ($columnType) = " data
+
+				# Validate Input for enter int
+				if [[ $columnType == "int" ]]
+				then while ! [[ $data =~ ^[1-9]*$ ]]
+					do
+						echo -e "invalid DataType !"
+						read -p "$columnName ($columnType) = " data
+					done
+				fi
+
+				# Validate Input for enter str	
+				if [[ $columnType == "str" ]]
+				then while ! [[ $data =~ ^[a-zA-Z]+[1-9]*$ ]]
+					do
+						echo -e "invalid DataType !"
+						read -p "$columnName ($columnType) = " data
+					done
+				fi
+				# Validate Input for enter PK
+				if [[ $columnKey == "PK" ]]
+				then while [[ true ]]
+					do
+						if [[ $data =~ ^[`awk 'BEGIN{FS="|" ; ORS=" "}{if(NR != 1)print $(('$i'-1))}' $tableName4`]$ ]]
+						then echo -e "invalid input for Primary Key !"
+						else break;
+						fi
+						read -p "$columnName ($columnType) = " data
+					done
+				fi
+
+				#Set row
+				if [[ $i == $columnNumber ]] 
+				then row=$row$data$rSep
+				else row=$row$data$sep
+				fi
+			done
+			echo -e $row"\c" >> $tableName4
+			if [[ $? == 0 ]]
+			then echo "Data Inserted Successfully"
+			else echo "Error Inserting Data into Table $tableName4"
+			fi
+			row=""
+			secondMenu
+	    }
+
+	    # Select from Table function
+	    function selectFromTable()
+	    {   
+			function selectAll()
+			{
+				read -p "Enter table name: " tableName51
+				while ! [[ -f $tableName51 ]]; do
+					echo -e "This table name is not exist !"
+					read -p "Enter table name: " tableName51
+				done
+				if [[ -f $tableName51 ]]
+				then cat $tableName51 
+					echo "$tableName51 table displayed all the data sucessfully."
+				fi
+			}
+
+			function selectByColumn()
+			{
+				read -p "Enter table name: " tableName52
+				while ! [[ -f $tableName52 ]]; do
+					echo -e "This table name is not exist !"
+					read -p "Enter table name: " tableName52
+				done
+				if [[ -f $tableName52 ]]
+				then read -p "Enter column value: " columnValue
+					fid=$(awk 'BEGIN{FS="|"}{{for(i=1;i<=NF;i++){if($i=="'$columnValue'") print $0}}}' $tableName52)
+					while [[ $fid == "" ]]; do
+						echo -e "This column value is not exist !"
+						read -p "Enter column value: " columnValue
+						fid=$(awk 'BEGIN{FS="|"}{{for(i=1;i<=NF;i++){if($i=="'$columnValue'") print $0}}}' $tableName52)
+					done
+					echo $fid
+				fi
+			}
+
+			function selectColumn()
+			{
+				read -p "Enter table name: " tableName53
+				while ! [[ -f $tableName53 ]]; do
+					echo -e "This table name is not exist !"
+					read -p "Enter table name: " tableName53
+				done
+				read -p "Enter column name: " columnName
+				fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$columnName'") print i}}}' $tableName53)
+				while [[ $fid == "" ]]; do
+					echo -e "This column name is not exist !"
+					read -p "Enter column name: " columnName
+					fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$columnName'") print i}}}' $tableName53)
+				done
+				awk 'BEGIN{FS="|"}{print $'$fid'}' $tableName53
+				echo "Column ($columnName) displayed successfully."
+			}
+
+			while true; do
+			echo ""
+			echo "======= Choose the type of select ======="
+			echo "1. Select all."
+			echo "2. Select by column."
+			echo "3. Select a column."
+			echo "4. Back to table menu."
+			echo "5. Back to main menu."
+			echo "6. Exit."
+			echo "=========================================="    
+			read -p ">>> please select a number: " thirdChoice
+			if [[ "$thirdChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+			then echo "Invalid input"
+			elif [[ "$thirdChoice" -eq 1 ]]
+			then selectAll
+			elif [[ "$thirdChoice" -eq 2 ]]
+			then selectByColumn
+			elif [[ "$thirdChoice" -eq 3 ]]
+			then selectColumn
+			elif [[ "$thirdChoice" -eq 4 ]]
+			then secondMenu
+			elif [[ "$thirdChoice" -eq 5 ]]
+			then cd ../.. 2>>./.error.log; firstMenu
+			elif [[ "$thirdChoice" -eq 6 ]]
+			then exit; break
+			else echo "Invalid input"
+			fi 
+			done
+	    }
+
+	    # Delete from Table function
+	    function DeleteFromTable()
+	    {   
+			read -p "Enter table Name: " tableName6
+			while ! [[ -f $tableName6 ]]; do
+					echo -e "This table name is not exist !"
+					read -p "Enter table name: " tableName6
+			done
+			read -p "Enter condition column name: " field
+			fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName6)
+			while [[ $fid == "" ]]; do
+				echo -e "This condition column name is not exist !"
+				read -p "Enter condition column name: " field
+				fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName6)
+			done
+
+			if ! [[ $fid == "" ]]
+			then read -p "Enter condition value: " val
+				res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print $'$fid'}' $tableName6 2>>./.error.log)
+				while [[ $res == "" ]]; do
+					echo -e "This condition value is not exist !"
+					read -p "Enter condition value: " val
+					res=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print $'$fid'}' $tableName6 2>>./.error.log)
+				done
+
+				if ! [[ $res == "" ]]
+				then NR=$(awk 'BEGIN{FS="|"}{if ($'$fid'=="'$val'") print NR}' $tableName6 2>>./.error.log)
+					sed -i ''$NR'd' $tableName6 2>>./.error.log
+					echo "Row no. $NR deleted successfully"
+					secondMenu
+				fi
+			fi
+	    }
+
+	    # Update into Table function
+	    function updateIntoTable()
+	    {   
+			read -p "Enter table name: " tableName7
+			while ! [[ -f $tableName7 ]]; do
+				echo -e "This table name is not exist !"
+				read -p "Enter table name: " tableName7
+			done
+
+			read -p "Enter condition column name: " field
+			fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName7)
+			while [[ $fid == "" ]]; do
+				echo -e "This condition column name is not exist !"
+				read -p "Enter condition column name: " field
+				fid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$field'") print i}}}' $tableName7)
+			done
+
+			if ! [[ $fid == "" ]]
+			then read -p "Enter condition value: " val
+				res=$(awk 'BEGIN{FS="|"} { if ($'$fid'=="'$val'") print $'$fid' }' $tableName7 2>>./.error.log)
+				while [[ $res == ""  ]]; do
+					echo -e "This condition value is not exist !"
+					read -p "Enter condition value: " val
+					res=$(awk 'BEGIN{FS="|"} { if ($'$fid'=="'$val'") print $'$fid' }' $tableName7 2>>./.error.log)
+				done
+
+				if ! [[ $res == "" ]]
+					then read -p "Enter field name to set: " setField
+					setFid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$setField'") print i}}}' $tableName7)
+					while [[ $setFid == ""  ]]; do
+						echo -e "This field name to set is not exist !"
+						read -p "Enter field name to set: " setField
+						setFid=$(awk 'BEGIN{FS="|"}{if(NR==1){for(i=1;i<=NF;i++){if($i=="'$setField'") print i}}}' $tableName7)
+					done
+
+					if ! [[ $setFid == ""  ]]; then
+					    read -p "Enter new value to set: " newValue
+						NR=$(awk 'BEGIN{FS="|"}{if ($'$fid' == "'$val'") print NR}' $tableName7 2>>./.error.log)
+						oldValue=$(awk 'BEGIN{FS="|"}{if(NR=='$NR'){for(i=1;i<=NF;i++){if(i=='$setFid') print $i}}}' $tableName7 2>>./.error.log)
+						sed -i ''$NR's/'$oldValue'/'$newValue'/g' $tableName7 2>>./.error.log
+						echo "($oldValue) updated to ($newValue) successfully"
+						secondMenu
+					fi
+				fi
+			fi
+	    }
+	    
+	    # The core of second menu function
+	    while true; do
+		echo ""
+		echo "============= Hello in [$dbName4] DB ============="
+		echo ">>> How could we help you? "
+		echo "1. Create table"
+		echo "2. List table"           
+		echo "3. Drop table"	  	 
+		echo "4. Insert into table" 
+		echo "5. Select from table"
+		echo "6. Delete from table"
+		echo "7. Update into table"
+		echo "8. Back to Main Menu"
+		echo "9. Exit"
+		echo "================================="    
+		read -p ">>> please select a number: " secondChoice
+
+		if [[ "$secondChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+		then 2>>./.error.log ; echo "Invalid input" 
+		elif [[ "$secondChoice" -eq 1 ]]
+		then createTable
+		elif [[ "$secondChoice" -eq 2 ]]
+		then listTable
+		elif [[ "$secondChoice" -eq 3 ]]
+		then dropTable
+		elif [[ "$secondChoice" -eq 4 ]]
+		then insertIntoTable
+		elif [[ "$secondChoice" -eq 5 ]]
+		then selectFromTable
+		elif [[ "$secondChoice" -eq 6 ]]
+		then DeleteFromTable
+		elif [[ "$secondChoice" -eq 7 ]]
+		then updateIntoTable
+		elif [[ "$secondChoice" -eq 8 ]]
+		then clear; cd ../.. 2>>./.error.log; firstMenu
+		elif [[ "$secondChoice" -eq 9 ]]
+		then exit; break
+		else echo "Invalid input" 
+		fi 
+	    done
+	}
+
+	# ================================================================================
+	# ================================================================================
+
+	# First menu function
+	function firstMenu()
+	{
+	    # Create DB function
+	    function createDB()
+	    {   
+		echo "=========== Important Notes ==========="
+		echo "- Do not use special characters"
+		echo "- Do not use numbers at the first"
+		echo "======================================="
+		read -p "Enter DB name: " dbName1
+		if [[ "$dbName1" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+		then if [[ -d "./DBMS/$dbName1" ]]
+		    then echo "It's already exist, please user another name."
+		    else mkdir ./DBMS/$dbName1; echo "$dbName1" DB created sucessfully.;
+		    fi
+		else echo "Invaild name."
+		fi
+	    }
+
+	    # List DB function
+	    function listDB()
+	    {   
+			ls -l ./DBMS 2>>./.error.log
+			echo "Listed successfully"
+	    }
+
+	    # Drop DB function
+	    function dropDB()
+	    {   
+		read -p "Enter DB name: " dbName3
+		if [[ "$dbName3" = "" ]]
+		then echo "Empty input, please enter DB name."
+		elif [[ -d "./DBMS/$dbName3" ]]
+		then rm -rf "./DBMS/$dbName3/"; echo "$dbName3" removed sucessfully 
+		else echo "It is not exist."
+		fi
+	    }
+
+	    # Connect DB function
+	    function connectDB()
+	    {   
+		read -p "Enter DB name: " dbName4
+		if [[ "$dbName4" = "" ]]
+		then echo "Empty input, please enter DB name."
+		elif [[ -d "./DBMS/$dbName4" ]]
+		then cd "./DBMS/$dbName4"; echo "Connected successfully to $dbName4" DB; secondMenu
+		else echo "It is not exist."
+		fi
+	    }
+
+	    # The core of first menu function
+	    mkdir DBMS 2>> ./.error.log
+	    clear
+	    while true; do
+		echo ""
+		echo "============= Hello to our DBMS ============="
+		echo ">>> How could we help you? "
+		echo "1. Create DB"
+		echo "2. List DB"
+		echo "3. Drop DB"
+		echo "4. Connect DB"
+		echo "5. Exit"
+		echo "=============================================="    
+		read -p ">>> please select a number: " firstChoice
+		if [[ "$firstChoice" =~ ^[a-zA-Z]+[0-9]*" "*[a-zA-Z]*[0-9]*$ ]]
+		then echo "Invalid input"
+		elif [[ "$firstChoice" -eq 1 ]]
+		then createDB
+		elif [[ "$firstChoice" -eq 2 ]]
+		then listDB
+		elif [[ "$firstChoice" -eq 3 ]]
+		then dropDB
+		elif [[ "$firstChoice" -eq 4 ]]
+		then connectDB
+		elif [[ "$firstChoice" -eq 5 ]]
+		then exit; break
+		else echo "Invalid input"
+		fi 
+	    done
+	}
+
+	firstMenu
+
+
+
+
