@@ -1,10 +1,10 @@
-Bash Shell Script Database Management System (DBMS)
+# Bash Shell Script Database Management System (DBMS)
 
-Overview
+## Overview
 This project aims to develop a simple Database Management System (DBMS) using Bash shell scripting. The system allows users to store and retrieve data from the hard disk through a Command-Line Interface (CLI) menu-based application.
 
-Features
-Main Menu
+## Features
+### Main Menu
 
 1. Create Database
 - Allows the user to create a new database.
@@ -15,8 +15,8 @@ Main Menu
 4. Drop Database
 - Deletes an existing database.
 
-Usage
-Main Menu
+## Usage
+### Main Menu
 1. Create Database
 - Enter the database name.
 - The system will create a directory for the database if it does not already exist.
@@ -31,7 +31,7 @@ Main Menu
 4. Drop Database
 - Enter the database name to delete.
 
-Second Menu (Database Operations Menu)
+## Second Menu (Database Operations Menu)
 1. Create Table
 - Enter the table name and the number of columns.
 - Define column names and data types (int or str).
@@ -59,18 +59,17 @@ Second Menu (Database Operations Menu)
 - Enter the table name and primary key value of the row to update.
 - Input new values for the columns. The system validates data types.
 
-How to Run
+## How to Run
 - Ensure you have Bash installed on your system.
 - Make the main script executable:
     chmod +x DBMS2.sh
 - Run the script:
     ./DBMS2.sh
 
-Contributing
+## Contributing
 - Contributions are welcome! Feel free to open issues or submit pull requests.
 
-Authors
-- This project was made by two ITI students:
-
-Moataz Sobhy
-Mahmoud Ismail
+## Authors
+This project was made by two ITI students:
+- Moataz Sobhy
+- Mahmoud Ismail
